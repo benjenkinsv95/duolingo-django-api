@@ -1,5 +1,5 @@
 """
-ASGI config for django_auth_template project.
+ASGI config for duolingo_django_api project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_auth_template.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duolingo_django_api.settings')
 
 application = get_asgi_application()

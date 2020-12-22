@@ -1,2 +1,2 @@
-DROP DATABASE IF EXISTS <project-name-here>;
-CREATE DATABASE <project-name-here>;
+DROP DATABASE IF EXISTS "duolingo_django_api";
+CREATE DATABASE "duolingo_django_api";
