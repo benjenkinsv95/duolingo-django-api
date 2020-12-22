@@ -16,6 +16,7 @@ python-dotenv = "*"
 dj-database-url = "*"
 duolingo-api = "*"
 whitenoise = "*"
+inflect = "*"
 
 [requires]
 python_version = "3.7"

@@ -2,6 +2,8 @@ import os
 import duolingo
 import json
 from rest_framework.views import APIView
+import inflect
+
 from django.http import HttpResponse
 from rest_framework.response import Response
 
@@ -12,6 +14,7 @@ USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 
 lingo  = duolingo.Duolingo(USERNAME, PASSWORD)
+engine = inflect.engine()
 
 
 
@@ -44,10 +47,19 @@ class DuoLingo(APIView):
 
         # flatten them: https://stackoverflow.com/a/952952/3500171
         words = [item for sublist in words_lists for item in sublist]
+        
+
 
         target_to_source_translations = lingo.get_translations(words, source=target_language, target=source_language)
         source_translation_lists = target_to_source_translations.values()
         source_translations = [item for sublist in source_translation_lists for item in sublist]
+        
+        if source_language == 'en':
+            for i in range(len(source_translations)):
+                english_source_word = source_translations[i]
+                plural_english_source_word = engine.plural(english_source_word)
+                source_translations.append(plural_english_source_word)
+                print(english_source_word, plural_english_source_word)
 
         dirty_source_to_target_translations = lingo.get_translations(source_translations, source=source_language, target=target_language)
         # remove the empty translations
