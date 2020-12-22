@@ -7,7 +7,7 @@
 # SOURCE_LANGUAGE='en' TARGET_LANGUAGE='la' USERNAME='BenJenkins8' sh curl-scripts/duolingo/get_source_to_target_phrases.sh
 # SOURCE_LANGUAGE='es' TARGET_LANGUAGE='en' USERNAME='Anjanasbabu' sh curl-scripts/duolingo/get_source_to_target_phrases.sh
 
-curl "http://localhost:8000/source_to_target_phrases/" \
+curl "https://duolingo-django-api.herokuapp.com/source_to_target_phrases/" \
   --include \
   --request POST \
   --header "Content-Type: application/json" \
