@@ -42,6 +42,9 @@ else:
     os.getenv('CLIENT_ORIGIN')
   ]
 
+# Allow requests from anywhere
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 # Default database as defined above depending on development
