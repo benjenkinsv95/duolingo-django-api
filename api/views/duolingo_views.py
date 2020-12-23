@@ -1,6 +1,7 @@
 import os
 import duolingo
 import json
+import time
 from rest_framework.views import APIView
 import inflect
 
@@ -12,8 +13,11 @@ from ..serializers import MangoSerializer, UserSerializer
 
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
-
 lingo  = duolingo.Duolingo(USERNAME, PASSWORD)
+DELAY = 1
+time.sleep(DELAY)
+
+
 engine = inflect.engine()
 
 
@@ -37,13 +41,19 @@ class DuoLingo(APIView):
         print(target_language)
         print(username)
         
+        print('bens', lingo.get_languages(abbreviations=True))
+        time.sleep(DELAY)
         lingo.set_username(username)
-        print(lingo.get_languages(abbreviations=True))
+        time.sleep(DELAY)
+        print('username', lingo.get_languages(abbreviations=True))
+        time.sleep(DELAY)
 
         skills = lingo.get_learned_skills(target_language)
+        time.sleep(DELAY)
         # print('skills', skills)
         
         words_lists = map(lambda skill: skill['words'], skills)
+        time.sleep(DELAY)
 
         # flatten them: https://stackoverflow.com/a/952952/3500171
         words = [item for sublist in words_lists for item in sublist]
@@ -51,17 +61,26 @@ class DuoLingo(APIView):
 
 
         target_to_source_translations = lingo.get_translations(words, source=target_language, target=source_language)
+        time.sleep(DELAY)
         source_translation_lists = target_to_source_translations.values()
         source_translations = [item for sublist in source_translation_lists for item in sublist]
         
-        if source_language == 'en':
-            for i in range(len(source_translations)):
-                english_source_word = source_translations[i]
-                plural_english_source_word = engine.plural(english_source_word)
-                source_translations.append(plural_english_source_word)
-                print(english_source_word, plural_english_source_word)
+        # if source_language == 'en':
+        #     for i in range(len(source_translations)):
+                
+        #         english_source_word = source_translations[i]
+        #         print(english_source_word, '->', end='')
+        #         try:
+        #             plural_english_source_word = engine.plural(english_source_word)
+        #         except:
+        #             print("Unexpected error:", english_source_word)
+        #         else:
+        #             source_translations.append(plural_english_source_word)
+                
+               
 
         dirty_source_to_target_translations = lingo.get_translations(source_translations, source=source_language, target=target_language)
+        time.sleep(DELAY)
         # remove the empty translations
         source_to_target_translations = filter(lambda item: item[1] != [], dirty_source_to_target_translations.items())
         data = json.dumps({ 'source_to_target_translations': dict(source_to_target_translations) })
