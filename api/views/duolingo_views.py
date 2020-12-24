@@ -15,7 +15,8 @@ USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 lingo  = duolingo.Duolingo(USERNAME, PASSWORD)
 DELAY = 1
-time.sleep(DELAY)
+# time.sleep(DELAY)
+
 
 
 engine = inflect.engine()
@@ -30,9 +31,17 @@ class DuoLingo(APIView):
     def post(self, request):
         """Index request"""
         
-        source_language = request.data['source_language'] # 'es' or 'en'
-        target_language = request.data['target_language'] # 'en' or 'la'
         username = request.data['username'] # 'Anjanasbabu' or 'BenJenkins8'
+        lingo.set_username(username)
+        time.sleep(DELAY)
+        
+
+        user_info = lingo.get_user_info()
+        # source_language = request.data['source_language'] # 'es' or 'en'
+        # target_language = request.data['target_language'] # 'en' or 'la'
+        
+        source_language = user_info['ui_language']
+        target_language = lingo.get_abbreviation_of(user_info['learning_language_string'])
 
         # source_language = 'en'
         # target_language = 'la'
@@ -41,19 +50,27 @@ class DuoLingo(APIView):
         print(target_language)
         print(username)
         
-        print('bens', lingo.get_languages(abbreviations=True))
-        time.sleep(DELAY)
-        lingo.set_username(username)
-        time.sleep(DELAY)
-        print('username', lingo.get_languages(abbreviations=True))
-        time.sleep(DELAY)
+        
+        # print('bens', lingo.get_languages(abbreviations=True))
+        # time.sleep(DELAY)
+        
+        # print('user_info', user_info)
+        # print(user_info['ui_language'])
+       
+        # print()
+        
+        
+        # 'ui_language': 'en'
+        # 'tracking_properties': {'direction': 'fr<-en', 'took_placementtest': False, 'learning_language'
+        # print('username', lingo.get_languages(abbreviations=True))
+        # time.sleep(DELAY)
 
         skills = lingo.get_learned_skills(target_language)
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
         # print('skills', skills)
         
         words_lists = map(lambda skill: skill['words'], skills)
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
 
         # flatten them: https://stackoverflow.com/a/952952/3500171
         words = [item for sublist in words_lists for item in sublist]
@@ -61,7 +78,7 @@ class DuoLingo(APIView):
 
 
         target_to_source_translations = lingo.get_translations(words, source=target_language, target=source_language)
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
         source_translation_lists = target_to_source_translations.values()
         source_translations = [item for sublist in source_translation_lists for item in sublist]
         
@@ -80,7 +97,7 @@ class DuoLingo(APIView):
                
 
         dirty_source_to_target_translations = lingo.get_translations(source_translations, source=source_language, target=target_language)
-        time.sleep(DELAY)
+        # time.sleep(DELAY)
         # remove the empty translations
         source_to_target_translations = filter(lambda item: item[1] != [], dirty_source_to_target_translations.items())
         data = json.dumps({ 'source_to_target_translations': dict(source_to_target_translations) })
