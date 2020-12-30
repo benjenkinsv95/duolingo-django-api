@@ -57,17 +57,17 @@ class DuoLingo(APIView):
         source_translations = [item for sublist in source_translation_lists for item in sublist]
         
         # TODO: Attempt to pluralize any words missing from duolingo
-        # if source_language == 'en':
-        #     for i in range(len(source_translations)):
+        if source_language == 'en' and target_language == 'la':
+            for i in range(len(source_translations)):
                 
-        #         english_source_word = source_translations[i]
-        #         print(english_source_word, '->', end='')
-        #         try:
-        #             plural_english_source_word = engine.plural(english_source_word)
-        #         except:
-        #             print("Unexpected error:", english_source_word)
-        #         else:
-        #             source_translations.append(plural_english_source_word)
+                english_source_word = source_translations[i]
+                print(english_source_word, '->', end='')
+                try:
+                    plural_english_source_word = engine.plural(english_source_word)
+                except:
+                    print("Unexpected error:", english_source_word)
+                else:
+                    source_translations.append(plural_english_source_word)
                 
         dirty_source_to_target_translations = lingo.get_translations(source_translations, source=source_language, target=target_language)
         # remove the empty translations
