@@ -29,15 +29,15 @@ class DuoLingo(APIView):
 
     def post(self, request):
         """Index request"""
-        
+
         # Extract username from incoming request and set it
         username = request.data['username'] # ex. 'Anjanasbabu' or 'BenJenkins8'
         lingo.set_username(username)
-        
-        # Delay to make sure username is set before continuing 
+
+        # Delay to make sure username is set before continuing
         time.sleep(DELAY)
-        
-        # It seems I can only get translations for the current language, so extract the 
+
+        # It seems I can only get translations for the current language, so extract the
         # ui_language - The language they are using in duolingo
         # target_language - the language currently being learned in duo lingo
         user_info = lingo.get_user_info()
@@ -50,16 +50,16 @@ class DuoLingo(APIView):
         words_lists = map(lambda skill: skill['words'], skills)
 
         # flatten them: https://stackoverflow.com/a/952952/3500171
-        words = [item for sublist in words_lists for item in sublist]
-        
-        target_to_source_translations = lingo.get_translations(words, source=target_language, target=source_language)
+        all_target_words = [item for sublist in words_lists for item in sublist]
+
+        target_to_source_translations = lingo.get_translations(all_target_words, source=target_language, target=source_language)
         source_translation_lists = target_to_source_translations.values()
         source_translations = [item for sublist in source_translation_lists for item in sublist]
-        
+
         # TODO: Attempt to pluralize any words missing from duolingo
         if source_language == 'en' and target_language == 'la':
             for i in range(len(source_translations)):
-                
+
                 english_source_word = source_translations[i]
                 print(english_source_word, '->', end='')
                 try:
@@ -68,11 +68,16 @@ class DuoLingo(APIView):
                     print("Unexpected error:", english_source_word)
                 else:
                     source_translations.append(plural_english_source_word)
-                
+
         dirty_source_to_target_translations = lingo.get_translations(source_translations, source=source_language, target=target_language)
+
+        # Filter out any translations that include words I don't know yet
+        for source_word, target_words in dirty_source_to_target_translations.items():
+          dirty_source_to_target_translations[source_word] = list(filter(lambda target: target in all_target_words, target_words))
+
         # remove the empty translations
-        source_to_target_translations = filter(lambda item: item[1] != [], dirty_source_to_target_translations.items())
-        data = json.dumps({ 'source_to_target_translations': dict(source_to_target_translations) })
-        # print(data)
+        source_to_target_translations = dict(filter(lambda item: item[1] != [], dirty_source_to_target_translations.items()))
+
+        data = json.dumps({ 'source_to_target_translations': source_to_target_translations })
 
         return Response(data)
