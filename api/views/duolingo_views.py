@@ -73,7 +73,7 @@ class DuoLingo(APIView):
 
             # source without parenthesis (but still containing the text inside the parenthesis)
             source_without_parenthesis = source_translation[0:paren_start] + source_translation[paren_start + 1:paren_end] + source_translation[paren_end + 1:]
-            # print(source_translation, "without parenthetical", source_without_parenthetical, "without parenthesis", source_without_parenthesis)
+            print(source_translation, "without parenthetical", source_without_parenthetical, "without parenthesis", source_without_parenthesis)
             return source_without_parenthetical, source_without_parenthesis
 
         # Get versions of the translation without /. Expand the / into the possible options
@@ -109,12 +109,13 @@ class DuoLingo(APIView):
             # If we have parenthesis in the term
             if "(" in source_translation and ")" in source_translation:
                 # Get versions without parenthesis
+                print(source_translation)
                 source_without_parenthetical, source_without_parenthesis = without_parenthesis(source_translation)
                 # Call this function on the versions without parenthesis
                 add_target_to_source(source_without_parenthetical, target)
                 add_target_to_source(source_without_parenthesis, target)
             elif "/" in source_translation:
-                optional_translations = split_on_forward_slashes(normalized_source_translation)
+                optional_translations = split_on_forward_slashes(source_translation)
 
                 for optional_translation in optional_translations:
                     add_target_to_source(optional_translation, target)
@@ -124,6 +125,8 @@ class DuoLingo(APIView):
               if source_translation not in source_to_target_translations:
                   source_to_target_translations[source_translation] = []
 
+              if "(" in source_translation or ")" in source_translation:
+                  print("Questionable:", source_translation)
               source_to_target_translations[source_translation].append(target)
 
         for target, source_translations in target_to_source_translations.items():
