@@ -132,7 +132,7 @@ class DuoLingo(APIView):
 
         for target, source_translations in target_to_source_translations.items():
             for source_translation in source_translations:
-                normalized_source_translation = re.sub('[\.\?]', '', source_translation.lower())
+                normalized_source_translation = re.sub('[\.\?\-]', '', source_translation.lower())
                 add_target_to_source(normalized_source_translation, target)
 
 
