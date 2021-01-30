@@ -121,19 +121,23 @@ class DuoLingo(APIView):
                 for optional_translation in optional_translations:
                     add_target_to_source(optional_translation, target)
             else:
-              # If there aren't parenthesis in the source translation
+              # Some parenthesis are left over in the french translations for some reason
+              sanatize_source = re.sub('[()]', '', source_translation)
+
+              # If there aren't matching parenthesis in the source translation
               # Add the source_translation to the dictionary
-              if source_translation not in source_to_target_translations:
-                  source_to_target_translations[source_translation] = []
+              if sanatize_source not in source_to_target_translations:
+                  source_to_target_translations[sanatize_source] = []
 
               if "(" in source_translation or ")" in source_translation:
                   print("Questionable:", source_translation)
-              source_to_target_translations[source_translation].append(target)
+
+              source_to_target_translations[sanatize_source].append(target)
 
         for target, source_translations in target_to_source_translations.items():
             for source_translation in source_translations:
                 # remove hyphen, period, and comma. Eventually try to escape these on the front end instead
-                normalized_source_translation = re.sub('[\.\?\-\']', '', source_translation.lower())
+                normalized_source_translation = re.sub('[\.\?\'\-]', '', source_translation.lower())
                 add_target_to_source(normalized_source_translation, target)
 
 
