@@ -30,7 +30,6 @@ class DuoLingoAudio(APIView):
 
     def get(self, request):
         """Index request"""
-        target_language = request.query_params.get('target_language')
         word = request.query_params.get('word')
 
         # Delay to make sure username is set before continuing
@@ -41,8 +40,7 @@ class DuoLingoAudio(APIView):
         # target_language - the language currently being learned in duo lingo
         user_info = lingo.get_user_info()
         source_language = user_info['ui_language']
-        target_language = lingo.get_abbreviation_of(target_language)
-        print('source_language', source_language, 'target_language', target_language)
+        print('source_language', source_language)
 
         audio_url = lingo.get_audio_url(word)
 
